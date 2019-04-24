@@ -207,22 +207,16 @@ int main(int argc, char **argv) {
             // Start camera loop
             cap.capture_video_stream(mtx, [&endpoint, reconnect, &autopilot_interface, &strVec, &my_file](void *buf, int size, int m_bt) {
                                             endpoint.send(buf, size);
-    std::cout << "Some random text" << std::endl;
-    // compare current and previous timestamps if diff > 1000 milliseconds(1 second)
-    // show bitrate
-    std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
-    if (std::chrono::duration_cast<std::chrono::milliseconds>(now - init).count() >= 100) {
-        //autopilot_interface.read_messages(); 
-        autopilot_interface.write_send_message(&autopilot_interface, &strVec); //for debug
-        autopilot_interface.write_to_file_message(&autopilot_interface, &my_file);
-        strVec.clear(); 
-        
-        
-        std::chrono::time_point<std::chrono::system_clock> init = std::chrono::system_clock::now();
-    }
-    std::cout << "bitrate in client lambda " << m_bt << std::endl;
-					    ;},
-                         reconnect, bt_s);
+            // show bitrate
+            std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
+            if (std::chrono::duration_cast<std::chrono::milliseconds>(now - init).count() >= 100) {
+                //autopilot_interface.read_messages();
+                autopilot_interface.write_send_message(&autopilot_interface, &strVec); //for debug
+                autopilot_interface.write_to_file_message(&autopilot_interface, &my_file);
+                strVec.clear();
+                std::chrono::time_point<std::chrono::system_clock> init = std::chrono::system_clock::now();
+            }
+            std::cout << "bitrate in client lambda " << m_bt << std::endl;},reconnect, bt_s);
             /// release camera
             cap.video_free();
             /// check if we can join latency control stream

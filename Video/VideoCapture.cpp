@@ -61,7 +61,7 @@ void VideoCapture::set_params(std::string &dev, uint8_t cam_id, uint16_t width, 
 }
 
 
-void VideoCapture::_measure_bitrate(int used_bytes, int *m_bt) {
+void VideoCapture::_measure_bitrate(int used_bytes, int &m_bt) {
     // save current frame bite value
     current_cnt_ += used_bytes;
     // get current timestamp
@@ -72,7 +72,7 @@ void VideoCapture::_measure_bitrate(int used_bytes, int *m_bt) {
         // some function to show bitrate currentlly print to stderr
         std::cerr << "Current bitrate : " << (float)(current_cnt_ * 8 * std::chrono::duration_cast<std::chrono::milliseconds>(now - init_point_).count() / 1000) / 1000000 << " Mbit/s    |" << std::endl;
         // after printing to output set counter to zero for next round
-	*m_bt = current_cnt_;
+	m_bt = current_cnt_;
         current_cnt_ = 0;
         // set new timestamp
         init_point_ = std::chrono::system_clock::now();

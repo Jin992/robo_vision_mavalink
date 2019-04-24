@@ -86,7 +86,7 @@ private:
     int video_H264_get_key_frame(int type);
 
 private:
-    void _measure_bitrate(int used_bytes, int *m_bt);
+    void _measure_bitrate(int used_bytes, int &m_bt);
 
 private:
     typedef  std::chrono::time_point<std::chrono::system_clock> time_stamp_t;
