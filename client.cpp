@@ -15,6 +15,8 @@ constexpr int height_n      = 4;
 constexpr int fps_n         = 5;
 constexpr int bitrate_n     = 6;
 
+#define PI           3.14159265358979323846  /* pi include need math.h in qt*/
+
 /**
  * void watch_dog(websocket_endpoint &endpoint, VideoCapture &cap, char *address,int timer)
  * @brief Restart server VideoStream and Sequency&Latency servers when it needed
@@ -207,16 +209,28 @@ int main(int argc, char **argv) {
             // Start camera loop
             cap.capture_video_stream(mtx, [&endpoint, reconnect, &autopilot_interface, &strVec, &my_file](void *buf, int size, int m_bt) {
                                             endpoint.send(buf, size);
-            // show bitrate
-            std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
-            if (std::chrono::duration_cast<std::chrono::milliseconds>(now - init).count() >= 100) {
-                //autopilot_interface.read_messages();
-                autopilot_interface.write_send_message(&autopilot_interface, &strVec); //for debug
-                autopilot_interface.write_to_file_message(&autopilot_interface, &my_file);
-                strVec.clear();
-                std::chrono::time_point<std::chrono::system_clock> init = std::chrono::system_clock::now();
-            }
-            std::cout << "bitrate in client lambda " << m_bt << std::endl;},reconnect, bt_s);
+    std::cout << "Some random text" << std::endl;
+    // compare current and previous timestamps if diff > 1000 milliseconds(1 second)
+    // show bitrate
+    std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
+    if (std::chrono::duration_cast<std::chrono::milliseconds>(now - init).count() >= 500) {
+        autopilot_interface.read_messages();
+	//autopilot_interface.write_send_message(&autopilot_interface, &strVec); //for debug
+	std::cout << "lat "<< au_face.global_position_int.lat/1e7 << std::endl;
+	std::cout << "lon "<< au_face.global_position_int.lon/1e7 << std::endl;
+	std::cout << "lon "<< au_face.global_position_int.relative_alt/1000 << std::endl; //  /1000)
+	std::cout << "fixtype "<< au_face.gps_raw_int.fix_type << std::endl;
+	std::cout << "roll " << au_face.attitude.pitch*180/PI << std::endl;
+	std::cout << "pitch " << au_face.attitude.roll*180/PI << std::endl;
+        autopilot_interface.write_to_file_message(&autopilot_interface, &my_file);
+        //strVec.clear(); 
+        
+        
+        std::chrono::time_point<std::chrono::system_clock> init = std::chrono::system_clock::now();
+    }
+    std::cout << "bitrate in client lambda " << m_bt << std::endl;
+					    ;},
+                         reconnect, bt_s);
             /// release camera
             cap.video_free();
             /// check if we can join latency control stream

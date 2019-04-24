@@ -348,7 +348,7 @@ read_messages()
 				case MAVLINK_MSG_ID_POSITION_TARGET_GLOBAL_INT:
 				{
 					//printf("MAVLINK_MSG_ID_POSITION_TARGET_GLOBAL_INT\n");
-					mavlink_msg_position_target_global_int_decode(&message, &(current_messages.position_target_global_int));
+					mavlink_msg_position_target_global_int_decode(&message, &global_position_int);
 					current_messages.time_stamps.position_target_global_int = get_time_usec();
 					this_timestamps.position_target_global_int = current_messages.time_stamps.position_target_global_int;
 					break;
@@ -915,11 +915,12 @@ Autopilot_Interface::write_send_message(Autopilot_Interface * au_face, std::vect
 						std::cout << au_face->cur_date_time << std::endl;
 
 						//strVec->push_back(au_face->cur_date_time);
-						strVec->push_back(std::to_string(au_face->gps_raw_int.lat/1e7));
-						strVec->push_back(std::to_string(au_face->gps_raw_int.lon/1e7));
-						strVec->push_back(std::to_string(au_face->gps_raw_int.alt/1000));
+						strVec->push_back(std::to_string(au_face->global_position_int.lat/1e7));
+						strVec->push_back(std::to_string(au_face->global_position_int.lon/1e7));
+						strVec->push_back(std::to_string(au_face->global_position_int.relative_alt/1000)); //  /1000)
 						strVec->push_back(std::to_string(au_face->gps_raw_int.fix_type));
 						strVec->push_back(std::to_string(au_face->attitude.pitch*180/PI));
+						strVec->push_back(std::to_string(au_face->attitude.roll*180/M_PI));
 						
 
 						for (auto i = strVec->begin(); i != strVec->end(); ++i)
@@ -937,13 +938,13 @@ Autopilot_Interface::write_to_file_message(Autopilot_Interface* au_face, std::of
 					 //<< au_face->attitude.time_boot_ms << std::setprecision(10) << ", "
 
 			*my_file << au_face->cur_date_time << ","
-					 << au_face->gps_raw_int.lat/1e7 << std::setprecision(10) << ","
-		             << au_face->gps_raw_int.lon/1e7 << std::setprecision(10) << ","
+					 << au_face->global_position_int.lat/1e7 << std::setprecision(10) << ","
+		             << au_face->global_position_int.lon/1e7 << std::setprecision(10) << ","
 		             //<< au_face->gps_raw_int.alt/1000 << std::setprecision(10) << ", "
-		             //<< autopilot_interface.attitude.yaw*180/M_PI << setprecision(10) << ", "
+		             		//<< autopilot_interface.attitude.yaw*180/M_PI << setprecision(10) << ", "
 					 << au_face->gps_fix_type << ","
-					 << au_face->gps_raw_int.alt/1000 << std::setprecision(10) << ","
-					 << au_face->server_got_bytes << std::setprecision(10) <<","
+					 << au_face->global_position_int.relative_alt/1000 << std::setprecision(10) << ","
+					 << au_face->attitude.roll*180/M_PI << std::setprecision(10) <<","
 
 		             << "\n";
 			my_file->close();

@@ -272,6 +272,7 @@ public:
 
 	mavlink_attitude_t attitude;   //was added this
 	mavlink_gps_raw_int_t gps_raw_int;	//was added this
+	mavlink_global_position_int_t global_position_int;
 	mavlink_home_position_t home_position;	//was added this
 
 	char reading_status;
